@@ -1,0 +1,61 @@
+порты 22 22
+80 80
+или 8080 80
+sudo apt update
+sudo apt upgrade -y
+sudo su
+apt install -y python3-flask
+git clone https://github.com/OldSharkDmi/adminka_zachet app
+cd app
+apt install -y python3-flask python3-venv nginx
+/usr/bin/python3 /home/newdmi/app/app.py
+nano /etc/systemd/system/flask_app.service
+#######
+
+[Unit]
+Description=A simple Flask app
+After=network.target
+[Service]
+User=newdmi
+WorkingDirectory=/home/newdmi/app
+ExecStart=/usr/bin/python3 /home/newdmi/app/app.py
+[Install]
+WantedBy=multi-user.target
+
+#######
+sudo systemctl daemon-reload
+sudo systemctl enable flask_app
+sudo systemctl start flask_app
+sudo systemctl status flask_appnano 
+
+apt-get update
+apt install nginx
+
+nano  /etc/nginx/sites-available/flask_app
+###
+
+server {
+    listen 80;
+    server_name $IP_ADDRESS;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+
+###
+
+sudo ln -s /etc/nginx/sites-available/flask_app /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+curl http://127.0.0.1:80sudo systemctl daemon-reload
+
+sudo systemctl restart flask_app
+sudo systemctl status flask_app
+sudo systemctl restart nginx
+rm /etc/nginx/sites-enabled/default
